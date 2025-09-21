@@ -1,6 +1,14 @@
 using Crud.Components;
+using Crud.Database;
+using Crud.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CS"));
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -15,6 +23,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+await app.SeedDataAsync();
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
